@@ -211,7 +211,7 @@ def comprarAnimal():
         tamano = check_tamano()
         print(f'Tamano: {tamano}')
 
-
+#https://cosasdedevs.com/posts/como-crear-un-crud-en-python-parte-2-creacion-y-listado/
 
     elif command == '2':
         print(f'opcion {command}')

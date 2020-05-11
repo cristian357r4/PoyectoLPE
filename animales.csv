@@ -1,13 +1,16 @@
-ID;ANIMAL;PRECIO;NOMBRE;RAZA;EDAD;COLOR;MOD_REPRODUCCION;ALIMENTACION;TAMANO;PESO;SEXO;PERFIL;COLOR_OJOS;TIPO_AGUA;PAIS_ORIGEN;VENENOSO;ESTADO_VENTA;FUNCION
-1;Perro;500;Bubu;Chihuahua;1;Café;Vivíparo;Omnivoro;15;200;Macho;Mascota;N/A;N/A;N/A;N/A;STOCK;N/A
-2;Perro;2800;Popi;Pitbul;3;Blanco;Vivíparo;Omnivoro;23.5;3000;Macho;Semental;N/A;N/A;N/A;N/A;STOCK;ladrar
-3;Perro;6500;Gara;Pastor Aleman;5;Café;Vivíparo;Omnivoro;82;15000;Hembra;Policia;N/A;N/A;N/A;N/A;STOCK;N/A
-4;Gato;1700;Chispa;Persa;4;Amarillo;Vivíparo;Omnivoro;15.3;2500;Hembra;N/A;Verdes;N/A;N/A;N/A;STOCK;N/A
-5;Gato;1200;Nata;Abisinio;2;Negro;Vivíparo;Omnivoro;12.5;3400;Hembra;N/A;Azules;N/A;N/A;N/A;STOCK;N/A
-6;Pez;100;Neo;Chromis;1;Verde;Ovuliparo;Carnivoro;2.4;25;Macho;N/A;N/A;Dulce;N/A;N/A;STOCK;N/A
-7;Pez;130;Nemo;Payaso;2;Naranja;Ovuliparo;Omnivoro;3.2;33;Macho;N/A;N/A;Salada;N/A;N/A;STOCK;N/A
-8;Pez;120;Martin;Payaso;2;Naranja;Ovuliparo;Omnivoro;2.6;27;Macho;N/A;N/A;Salada;N/A;N/A;STOCK;N/A
-9;Pez;135;Dory;Cirujano;1;Azul;Ovuliparo;Omnivoro;2.8;29;Hembra;N/A;N/A;Salada;N/A;N/A;STOCK;N/A
-10;Serpiente;7000;Luisa;Piton;3;Verde;Oviparo;Carnivoro;120.8;9700;Hembra;N/A;N/A;N/A;Brasil;N/A;STOCK;N/A
-11;Serpiente;6450;Lalo;Cascabel;6;Café;Oviparo;Carnivoro;115.3;8700;Macho;N/A;N/A;N/A;Mexico;N/A;STOCK;N/A
-12;Araña;1780;Kuko;Lobo;4;Roja;Oviparo;Carnivoro;5.7;200;Macho;N/A;N/A;N/A;N/A;SI;STOCK;N/A
+ID;ANIMAL;PRECIO;NOMBRE;RAZA;EDAD;COLOR;MOD_REPRODUCCION;ALIMENTACION;TAMANO;PESO;SEXO;PERFIL;COLOR_OJOS;TIPO_AGUA;PAIS_ORIGEN;VENENOSO;FUNCION;ESTADO_VENTA
+1;Perro;500;Bubu;Chihuahua;1;Café;Vivíparo;Omnivoro;15;200;Macho;Mascota;N/A;N/A;N/A;N/A;N/A;1
+2;Perro;2800;Popi;Pitbul;3;Blanco;Vivíparo;Omnivoro;23.5;3000;Macho;Semental;N/A;N/A;N/A;N/A;ladrar;1
+3;Perro;6500;Gara;Pastor Aleman;5;Café;Vivíparo;Omnivoro;82;15000;Hembra;Policia;N/A;N/A;N/A;N/A;N/A;1
+4;Gato;1700;Chispa;Persa;4;Amarillo;Vivíparo;Omnivoro;15.3;2500;Hembra;N/A;Verdes;N/A;N/A;N/A;N/A;1
+5;Gato;1200;Nata;Abisinio;2;Negro;Vivíparo;Omnivoro;12.5;3400;Hembra;N/A;Azules;N/A;N/A;N/A;N/A;1
+6;Pez;100;Neo;Chromis;1;Verde;Ovuliparo;Carnivoro;2.4;25;Macho;N/A;N/A;Dulce;N/A;N/A;N/A;1
+7;Pez;130;Nemo;Payaso;2;Naranja;Ovuliparo;Omnivoro;3.2;33;Macho;N/A;N/A;Salada;N/A;N/A;N/A;0
+8;Pez;120;Martin;Payaso;2;Naranja;Ovuliparo;Omnivoro;2.6;27;Macho;N/A;N/A;Salada;N/A;N/A;N/A;1
+9;Pez;135;Dory;Cirujano;1;Azul;Ovuliparo;Omnivoro;2.8;29;Hembra;N/A;N/A;Salada;N/A;N/A;N/A;1
+10;Serpiente;7000;Luisa;Piton;3;Verde;Oviparo;Carnivoro;120.8;9700;Hembra;N/A;N/A;N/A;Brasil;N/A;N/A;1
+11;Serpiente;6450;Lalo;Cascabel;6;Café;Oviparo;Carnivoro;115.3;8700;Macho;N/A;N/A;N/A;Mexico;N/A;N/A;1
+12;Araña;1780;Kuko;Lobo;4;Roja;Oviparo;Carnivoro;5.7;200;Macho;N/A;N/A;N/A;N/A;SI;N/A;1
+13;Perro;213;fff;ffff;4;ffff;Vivíparo;Omnívoro;123;45;Masculino;Policia;N/A;N/A;N/A;N/A;Olfatear;1
+14;Perro;12312;asdsad;asdasd;5;fff;Vivíparo;Omnívoro;123;78;Masculino;Apoyo a invidentes;N/A;N/A;N/A;N/A;Sentarse;1
+15;Gato;2134;ggg;gggg;4;fff;Vivíparo;Omnívoro;45;500;Masculino;N/A;Gris;N/A;N/A;N/A;N/A;1

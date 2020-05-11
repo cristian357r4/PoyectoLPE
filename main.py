@@ -77,17 +77,19 @@ SCHEMA = {
         'type': 'string',
         'max_length': 2
     },
+    'FUNCION': {
+        'type': 'string',
+        'max_length': 15
+    },
     'ESTADO_VENTA': {
         'type': 'string',
         'max_length': 6
 
-    },
-    'FUNCION': {
-        'type': 'string',
-        'max_length': 15
     }
 }
 '''               Operaciones de Archivo            '''
+
+
 def consultar_animales():
     print('Consultar todos')
     list_data = []
@@ -106,37 +108,39 @@ def consultar_animales():
                     file[list_header[key]] = value
 
                 list_data.append(file)
-    #diccionario de listas
+    # diccionario de listas
     return list_data
 
-def _print_table_contacts(list_contacts):
+
+def _print_table_contacts(lista_animales):
+    #lista original
     table = PrettyTable(SCHEMA.keys())
     index = 0
-    while index < len(list_contacts):
+    while index < len(lista_animales):
         '''for key in list_contacts[index]:
             print(list_contacts[index][key])'''
-        table.add_row(list(list_contacts[index].values()))
+        print(f'(index,estado_venta) = ({index+1},',lista_animales[index]['ESTADO_VENTA'],')')
+        table.add_row(list(lista_animales[index].values()))
         index += 1
     print(table)
     print('Pulsa cualquier letra para continuar')
 
     command = input()
-def save_animal():
-    data = [contact.name, contact.surname, contact.email, contact.phone, contact.birthday]
-    return insert(data)
+
+
+def save_animal(animal):
+    # animal es lista
+    return insert(animal)
+
 
 def insert(data):
-    id_contact = get_last_id() + 1
-    line = [id_contact] + data
-
     with open('animales.csv', mode='a', encoding='utf-8') as csv_file:
         data_writer = csv.writer(csv_file, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
-        data_writer.writerow(line)
-
+        data_writer.writerow(data)
     return True
 
 
-def bubbleSort(arr):
+'''def bubbleSort(arr):
     n = len(arr)
 
     # Traverse through all array elements
@@ -151,6 +155,81 @@ def bubbleSort(arr):
             # than the next element
             if arr[j] > arr[j + 1]:
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return  arr'''
+
+def buscar_animal():
+    print('Buscar Registro')
+    filters = {}
+    print('Buscar por tipo de animal (vacío para usar otro filtro):')
+    animal = input()
+    if animal:
+        filters['ANIMAL'] = animal
+    print('Buscar por tipo de Alimentacion (vacío para usar otro filtro):')
+    alimentacion = input()
+    if alimentacion:
+        filters['ALIMENTACION'] = alimentacion
+    print('Buscar por tipo de Reproduccion (vacío para usar otro filtro):')
+    reproduccion = input()
+    if reproduccion:
+        filters['MOD_REPRODUCCION'] = reproduccion
+    try:
+        list_animales = search_registros(filters)
+        if not list_animales:
+            return print('No hay ningún registro con esos criterios de búsqueda')
+
+        _print_table_contacts(list_animales)
+    except ValueError as err:
+        print(err)
+        time.sleep(1)
+        buscar_animal()
+
+def search_registros(filters):
+    #filters diccionario
+    if 'ANIMAL' not in filters and 'ALIMENTACION' not in filters and 'MOD_REPRODUCCION' not in filters:
+        raise ValueError('Debes envíar al menos un filtro')
+
+    list_animales = filtrar_resultados(filters)
+    return resultados_de_busqueda(list_animales)
+
+def filtrar_resultados(filters):
+
+    list_data = []
+    columnas = []
+    with open('animales.csv', mode='r', encoding='utf-8') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=';')
+        is_header = True
+        for row in csv_reader:
+            if is_header:
+                columnas = row
+                is_header = False
+                continue
+
+            if row:
+                file = {}
+
+                for key, value in enumerate(row):
+                    file[columnas[key]] = value
+
+                for key_filter, value_filter in filters.items():
+                    matches = re.search(rf"{value_filter}", file[key_filter], re.IGNORECASE)
+                    if matches:
+                        list_data.append(file)
+                        break
+
+    return list_data
+
+def resultados_de_busqueda(lista_animales):
+
+    if not lista_animales:
+        return None
+
+    object_contacts = []
+    # Convertimos los datos a objectos de tipo contact
+    for animal in lista_animales:
+        c = Contact(animal['ID'], animal['NAME'], animal['SURNAME'], animal['EMAIL'], animal['PHONE'], animal['BIRTHDAY'])
+        object_contacts.append(c)
+
+    return object_contacts
 
 def get_last_id():
     list_ids = []
@@ -163,16 +242,20 @@ def get_last_id():
                 continue
             if row:
                 list_ids.append(row[0])
-    bubbleSort(list_ids)
-    print('ultimo id: ', list_ids[0])
+    print('Before order: ', list_ids)
+    print(list_ids[-1])
+
     if not list_ids:
         return 0
 
     # Ordenamos la lista de mayor a menor y retornamos el elemento de mayor tamaño
-#    list_ids.sort(reverse=True)
-    return int(list_ids[0])
+    #    list_ids.sort(reverse=True)
+    return int(list_ids[-1])
+
 
 ''''              Validaciones                  '''
+
+
 def validaString_Cadena(cadena):
     if not re.search(regex_nombre, cadena):
         raise ValueError(
@@ -217,7 +300,6 @@ def check_precio():
             print(err)
 
 
-
 def check_raza():
     while True:
         print("Ingresa la raza")
@@ -228,12 +310,14 @@ def check_raza():
         except ValueError as err:
             print(err)
 
+
 def validarEdad(edad):
     if float(edad) > 5:
         raise ValueError('La edad del perro supera el limite establecido que son 5 años')
     return True
 
-def validarTamaño(tamano,animal):
+
+def validarTamaño(tamano, animal):
     if animal == 'g':
         if float(tamano) < 12:
             raise ValueError('El gato es muy pequeño debe medir al menos 12 cm')
@@ -249,13 +333,14 @@ def validarTamaño(tamano,animal):
     else:
         return True
 
-def validaPeso(peso,animal):
+
+def validaPeso(peso, animal):
     if animal == 'fish':
         if float(peso) >= 50:
             raise ValueError('El peso del pez debe ser menor a los 50 gramos')
         return True
     elif animal == 'spider':
-        if float(peso) >=  500 :
+        if float(peso) >= 500:
             raise ValueError('El peso de la araña debe ser menor de 500 gramos')
         return True
     else:
@@ -271,6 +356,7 @@ def check_edad():
             return edad
         except ValueError as err:
             print(err)
+
 
 def check_edad_perro():
     while True:
@@ -301,10 +387,11 @@ def check_tamano(animal):
         tamano = input()
         try:
             validarNumero(tamano)
-            if  validarTamaño(tamano,animal):
+            if validarTamaño(tamano, animal):
                 return tamano
         except ValueError as err:
             print(err)
+
 
 def check_tamano_gato():
     while True:
@@ -312,7 +399,7 @@ def check_tamano_gato():
         tamano = input()
         try:
             validarNumero(tamano)
-            if validarTamaño(tamano,'g'):
+            if validarTamaño(tamano, 'g'):
                 return tamano
         except ValueError as err:
             print(err)
@@ -324,11 +411,10 @@ def check_peso(animal):
         peso = input()
         try:
             validarNumero(peso)
-            if validaPeso(peso,animal):
+            if validaPeso(peso, animal):
                 return peso
         except ValueError as err:
             print(err)
-
 
 
 def check_sexo():
@@ -345,6 +431,7 @@ def check_sexo():
         else:
             print('Opcion no valida')
             time.sleep(1)
+
 
 def check_perfil():
     while True:
@@ -395,6 +482,7 @@ def check_color_ojos_gato():
             print('Opcion Incorrecta')
             time.sleep(1)
 
+
 def check_alimentacio():
     while True:
         print('Selecciona el tipo de Alimentacion')
@@ -409,6 +497,7 @@ def check_alimentacio():
         else:
             print('Opcion Incorrecta')
             time.sleep(1)
+
 
 def check_type_agua():
     while True:
@@ -425,6 +514,7 @@ def check_type_agua():
             print('Opcion Incorrecta')
             time.sleep(1)
 
+
 def check_pais_origen():
     while True:
         print('Ingrese el pais de Origen')
@@ -434,6 +524,7 @@ def check_pais_origen():
             return pais_origen
         except ValueError as err:
             print(err)
+
 
 def check_venenoso():
     while True:
@@ -452,7 +543,7 @@ def check_venenoso():
 
 
 def comprarAnimal():
-    #regresara el animal como una lista
+    # regresara el animal como una lista
     print('Menu de Compra')
     print('*' * 50)
     print('Que tipo de Animal se va a comprar?')
@@ -465,30 +556,56 @@ def comprarAnimal():
     print('[V]olver')
     command = input()
     command = command.upper()
-    #perro
+    # perro
     if command == '1':
         # perros
+        #obtener el ultimo ID
+        indice = get_last_id() +1
+        animal.append(indice)
+
         print('Perros')
+        animal.append('Perro')
+
         precio = check_precio()
+        animal.append(precio)
         print(f'Precio: {precio}')  # verificar que el precio sea mayor o = 100
+
         nombre = check_nombre()
         print(f'Nombre: {nombre}')
+        animal.append(nombre)
+
         raza = check_raza()
         print(f'Raza: {raza}')
+        animal.append(raza)
+
         edad = check_edad_perro()  # verificar que la edad sea mayo que cero
         print(f'Edad: {edad}')
+        animal.append(edad)
+
         color = check_color()
         print(f'Color: {color}')
+        animal.append(color)
+
         mod_reprocuccion = 'Vivíparo'
         print(f'Modo de reproduccion: {mod_reprocuccion}')
+        animal.append(mod_reprocuccion)
+
         alimentacion = 'Omnívoro'
         print(f'Modo de reproduccion: {alimentacion}')
+        animal.append(alimentacion)
+
         tamano = check_tamano('p')
         print(f'Tamano: {tamano}')
+        animal.append(tamano)
+
         peso = check_peso('perro')
         print(f'Peso: {peso}')
+        animal.append(peso)
+
         sexo = check_sexo()
         print(f'Sexo {sexo}')
+        animal.append(sexo)
+
         perfil = check_perfil()
         funcion = ''
         # perro.semental.ladrar(), perro.mascota.dormir(), perro.policia.olfatear(), perro.apoyo_invidentes.sentarse()
@@ -505,166 +622,347 @@ def comprarAnimal():
             perfil = 'Apoyo a invidentes'
             funcion = 'Sentarse'
         print(f'Perfil: {perfil}')
+        animal.append(perfil)
+
         color_ojo = 'N/A'
         print(f'Color de ojos: {color_ojo}')
+        animal.append(color_ojo)
+
         tipo_agua = 'N/A'
         print(f'Tipo Agua: {tipo_agua}')
+        animal.append(tipo_agua)
+
         pais_origen = 'N/A'
         print(f'Pais de Origen: {pais_origen}')
+        animal.append(pais_origen)
+
         venenoso = 'N/A'
         print(f'Venenoso: {venenoso}')
-        estado_venta = 'STOCK'
-        print(f'Estado de Venta: {estado_venta}')
-        print(f'Funcion: {funcion}')
+        animal.append(venenoso)
 
-    #Gato
+        print(f'Funcion: {funcion}')
+        animal.append(funcion)
+
+        estado_venta = 1
+        print(f'Estado de Venta: {estado_venta}')
+        animal.append(estado_venta)
+
+        print(f'Lista de salida(renglon) = {animal}')
+        #mandar lista
+        save_animal(animal)
+
+    # Gato
     elif command == '2':
+        indice = get_last_id() + 1
+        animal.append(indice)
+
         print('Gatos')
+        animal.append('Gato')
+
         precio = check_precio()
         print(f'Precio: {precio}')  # verificar que el precio sea mayor o = 100
+        animal.append(precio)
+
         nombre = check_nombre()
         print(f'Nombre: {nombre}')
+        animal.append(nombre)
+
         raza = check_raza()
         print(f'Raza: {raza}')
+        animal.append(raza)
+
         edad = check_edad()  # verificar que la edad sea mayo que cero
         print(f'Edad: {edad}')
+        animal.append(edad)
+
         color = check_color()
         print(f'Color: {color}')
+        animal.append(color)
+
         mod_reprocuccion = 'Vivíparo'
         print(f'Modo de Reproduccion: {mod_reprocuccion}')
+        animal.append(mod_reprocuccion)
+
         alimentacion = 'Omnívoro'
         print(f'Modo de Alimentacio: {alimentacion}')
+        animal.append(alimentacion)
+
         tamano = check_tamano_gato()
         print(f'Tamano: {tamano}')
+        animal.append(tamano)
+
         peso = check_peso('gato')
         print(f'Peso: {peso}')
+        animal.append(peso)
+
         sexo = check_sexo()
         print(f'Sexo {sexo}')
+        animal.append(sexo)
+
         perfil = 'N/A'
         print(f'Perfil: {perfil}')
+        animal.append(perfil)
+
         color_ojo = check_color_ojos_gato()
         print(f'Color de ojos: {color_ojo}')
+        animal.append(color_ojo)
+
         tipo_agua = 'N/A'
         print(f'Tipo Agua: {tipo_agua}')
+        animal.append(tipo_agua)
+
         pais_origen = 'N/A'
         print(f'Pais de Origen: {pais_origen}')
+        animal.append(pais_origen)
+
         venenoso = 'N/A'
         print(f'Venenoso: {venenoso}')
-        estado_venta = 'STOCK'
-        print(f'Estado de Venta: {estado_venta}')
+        animal.append(venenoso)
+
         funcion = 'N/A'
         print(f'Funcion: {funcion}')
-    #pez
+        animal.append(funcion)
+
+        estado_venta = '1'
+        print(f'Estado de Venta: {estado_venta}')
+        animal.append(estado_venta)
+
+        print(f'Lista de salida(renglon) = {animal}')
+        # mandar lista
+        save_animal(animal)
+
+    # pez
     elif command == '3':
+        indice = get_last_id() + 1
+        animal.append(indice)
+
         print('Pez')
+        animal.append('Pez')
+
         precio = check_precio()
         print(f'Precio: {precio}')  # verificar que el precio sea mayor o = 100
+        animal.append(precio)
+
         nombre = check_nombre()
         print(f'Nombre: {nombre}')
+        animal.append(nombre)
+
         raza = check_raza()
         print(f'Raza: {raza}')
+        animal.append(raza)
+
         edad = check_edad()  # verificar que la edad sea mayo que cero
         print(f'Edad: {edad}')
+        animal.append(edad)
+
         color = check_color()
         print(f'Color: {color}')
+        animal.append(color)
+
         mod_reprocuccion = 'Ovuliparo'
         print(f'Modo de Reproduccion: {mod_reprocuccion}')
+        animal.append(mod_reprocuccion)
+
         alimentacion = check_alimentacio()
         print(f'Modo de Alimentacion: {alimentacion}')
+        animal.append(alimentacion)
+
         tamano = check_tamano('f')
         print(f'Tamano: {tamano}')
+        animal.append(tamano)
+
         peso = check_peso('fish')
         print(f'Peso: {peso}')
+        animal.append(peso)
+
         sexo = check_sexo()
         print(f'Sexo {sexo}')
+        animal.append(sexo)
+
         perfil = 'N/A'
         print(f'Perfil: {perfil}')
+        animal.append(perfil)
+
         color_ojo = 'N/A'
         print(f'Color de ojos: {color_ojo}')
+        animal.append(color_ojo)
+
         tipo_agua = check_type_agua()
         print(f'Tipo Agua: {tipo_agua}')
+        animal.append(tipo_agua)
+
         pais_origen = 'N/A'
         print(f'Pais de Origen: {pais_origen}')
+        animal.append(pais_origen)
+
         venenoso = 'N/A'
         print(f'Venenoso: {venenoso}')
-        estado_venta = 'STOCK'
-        print(f'Estado de Venta: {estado_venta}')
+        animal.append(venenoso)
+
         funcion = 'N/A'
         print(f'Funcion: {funcion}')
-    #serpiente
+        animal.append(funcion)
+
+        estado_venta = 1
+        print(f'Estado de Venta: {estado_venta}')
+
+        animal.append(estado_venta)
+
+    # serpiente
     elif command == '4':
+        indice = get_last_id() + 1
+        animal.append(indice)
+
         print('Serpiente')
+        animal.append('Serpiente')
+
         precio = check_precio()
         print(f'Precio: {precio}')  # verificar que el precio sea mayor o = 100
+        animal.append(precio)
+
         nombre = check_nombre()
         print(f'Nombre: {nombre}')
+        animal.append(nombre)
+
         raza = check_raza()
         print(f'Raza: {raza}')
+        animal.append(raza)
+
         edad = check_edad()  # verificar que la edad sea mayo que cero
         print(f'Edad: {edad}')
+        animal.append(edad)
+
         color = check_color()
         print(f'Color: {color}')
+        animal.append(color)
+
         mod_reprocuccion = 'Oviparo'
         print(f'Modo de Reproduccion: {mod_reprocuccion}')
+        animal.append(mod_reprocuccion)
+
         alimentacion = 'Carnivoro'
         print(f'Modo de Alimentacion: {alimentacion}')
+        animal.append(alimentacion)
+
         tamano = check_tamano('s')
         print(f'Tamano: {tamano}')
+        animal.append(tamano)
+
         peso = check_peso('serpiente')
         print(f'Peso: {peso}')
+        animal.append(peso)
+
         sexo = check_sexo()
         print(f'Sexo {sexo}')
+        animal.append(sexo)
+
         perfil = 'N/A'
         print(f'Perfil: {perfil}')
+        animal.append(perfil)
+
         color_ojo = 'N/A'
         print(f'Color de ojos: {color_ojo}')
+        animal.append(color_ojo)
+
         tipo_agua = 'N/A'
         print(f'Tipo Agua: {tipo_agua}')
+        animal.append(tipo_agua)
+
         pais_origen = check_pais_origen()
         print(f'Pais de Origen: {pais_origen}')
+        animal.append(pais_origen)
+
         venenoso = 'N/A'
         print(f'Venenoso: {venenoso}')
-        estado_venta = 'STOCK'
-        print(f'Estado de Venta: {estado_venta}')
+        animal.append(venenoso)
+
         funcion = 'N/A'
         print(f'Funcion: {funcion}')
-    #arañas
+        animal.append(funcion)
+
+        estado_venta = 1
+        print(f'Estado de Venta: {estado_venta}')
+        animal.append(estado_venta)
+
+        save_animal(animal)
+    # arañas
     elif command == '5':
+        indice = get_last_id() + 1
+        animal.append(indice)
+
         print('Arañas')
+        animal.append('Araña')
+
         precio = check_precio()
         print(f'Precio: {precio}')  # verificar que el precio sea mayor o = 100
+        animal.append(precio)
+
         nombre = check_nombre()
         print(f'Nombre: {nombre}')
+        animal.append(nombre)
+
         raza = check_raza()
         print(f'Raza: {raza}')
+        animal.append(raza)
+
         edad = check_edad()  # verificar que la edad sea mayo que cero
         print(f'Edad: {edad}')
+        animal.append(edad)
+
         color = check_color()
         print(f'Color: {color}')
+        animal.append(color)
+
         mod_reprocuccion = 'Oviparo'
         print(f'Modo de Reproduccion: {mod_reprocuccion}')
+        animal.append(mod_reprocuccion)
+
         alimentacion = 'Carnivoro'
         print(f'Modo de Alimentacion: {alimentacion}')
+        animal.append(alimentacion)
+
         tamano = check_tamano('a')
         print(f'Tamano: {tamano}')
+        animal.append(tamano)
+
         peso = check_peso('spider')
         print(f'Peso: {peso}')
+        animal.append(peso)
+
         sexo = check_sexo()
         print(f'Sexo {sexo}')
+        animal.append(sexo)
+
         perfil = 'N/A'
         print(f'Perfil: {perfil}')
+        animal.append(perfil)
+
         color_ojo = 'N/A'
         print(f'Color de ojos: {color_ojo}')
+        animal.append(color_ojo)
+
         tipo_agua = 'N/A'
         print(f'Tipo Agua: {tipo_agua}')
+        animal.append(tipo_agua)
+
         pais_origen = 'N/A'
         print(f'Pais de Origen: {pais_origen}')
+        animal.append(pais_origen)
+
         venenoso = check_venenoso()
         print(f'Venenoso: {venenoso}')
-        estado_venta = 'STOCK'
-        print(f'Estado de Venta: {estado_venta}')
+        animal.append(venenoso)
+
         funcion = 'N/A'
         print(f'Funcion: {funcion}')
+        animal.append(funcion)
+
+        estado_venta = 1
+        print(f'Estado de Venta: {estado_venta}')
+        animal.append(estado_venta)
+
+        save_animal(animal)
+
     elif command == 'V':
         run()
     else:
@@ -701,7 +999,7 @@ def run():
     elif command == 'E':
         pass
     elif command == 'B':
-        pass
+        buscar_animal()
     elif command == 'S':
         os._exit(1)
     else:

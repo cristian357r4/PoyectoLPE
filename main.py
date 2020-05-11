@@ -1,3 +1,4 @@
+import csv
 import os
 import time
 import re
@@ -91,7 +92,7 @@ def consultar_animales():
     print('Consultar todos')
     list_data = []
     list_header = []
-    with open(self._filename, mode='r', encoding='utf-16') as csv_file:
+    with open('animales.csv', mode='r', encoding='utf-8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=';')
         is_header = True
         for row in csv_reader:
@@ -105,9 +106,71 @@ def consultar_animales():
                     file[list_header[key]] = value
 
                 list_data.append(file)
-
+    #diccionario de listas
     return list_data
 
+def _print_table_contacts(list_contacts):
+    table = PrettyTable(SCHEMA.keys())
+    index = 0
+    while index < len(list_contacts):
+        '''for key in list_contacts[index]:
+            print(list_contacts[index][key])'''
+        table.add_row(list(list_contacts[index].values()))
+        index += 1
+    print(table)
+    print('Pulsa cualquier letra para continuar')
+
+    command = input()
+def save_animal():
+    data = [contact.name, contact.surname, contact.email, contact.phone, contact.birthday]
+    return insert(data)
+
+def insert(data):
+    id_contact = get_last_id() + 1
+    line = [id_contact] + data
+
+    with open('animales.csv', mode='a', encoding='utf-8') as csv_file:
+        data_writer = csv.writer(csv_file, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
+        data_writer.writerow(line)
+
+    return True
+
+
+def bubbleSort(arr):
+    n = len(arr)
+
+    # Traverse through all array elements
+    for i in range(n - 1):
+        # range(n) also work but outer loop will repeat one time more than needed.
+
+        # Last i elements are already in place
+        for j in range(0, n - i - 1):
+
+            # traverse the array from 0 to n-i-1
+            # Swap if the element found is greater
+            # than the next element
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+
+def get_last_id():
+    list_ids = []
+    with open('animales.csv', mode='r', encoding='utf-8') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=';')
+        is_header = True
+        for row in csv_reader:
+            if is_header:
+                is_header = False
+                continue
+            if row:
+                list_ids.append(row[0])
+    bubbleSort(list_ids)
+    print('ultimo id: ', list_ids[0])
+    if not list_ids:
+        return 0
+
+    # Ordenamos la lista de mayor a menor y retornamos el elemento de mayor tamaño
+#    list_ids.sort(reverse=True)
+    return int(list_ids[0])
 
 ''''              Validaciones                  '''
 def validaString_Cadena(cadena):
@@ -453,6 +516,7 @@ def comprarAnimal():
         estado_venta = 'STOCK'
         print(f'Estado de Venta: {estado_venta}')
         print(f'Funcion: {funcion}')
+
     #Gato
     elif command == '2':
         print('Gatos')
@@ -630,7 +694,8 @@ def run():
     if command == 'C':
         comprarAnimal()
     elif command == 'L':
-        consultar_animales()
+        print(_print_table_contacts(consultar_animales()))
+
     elif command == 'V':
         pass
     elif command == 'E':

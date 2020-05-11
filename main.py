@@ -178,6 +178,25 @@ def check_tamano():
         check_tamano()
 
 
+def check_peso():
+    print('Ingresa el prso')
+    peso= input()
+    try:
+        validarNumero(peso)
+        return peso
+    except ValueError as err:
+        print(err)
+        check_peso()
+
+
+def check_sexo():
+    print('Elige el sexo')
+    print('[M]asculino')
+    print('[F]emenino')
+    sexo= input()
+
+
+
 def comprarAnimal():
     print('Menu de Compra')
     print('*' * 50)
@@ -210,6 +229,8 @@ def comprarAnimal():
         print(f'Modo de reproduccion: {alimentacion}')
         tamano = check_tamano()
         print(f'Tamano: {tamano}')
+        peso = check_peso()
+        sexo = check_sexo()
 
 #https://cosasdedevs.com/posts/como-crear-un-crud-en-python-parte-2-creacion-y-listado/
 

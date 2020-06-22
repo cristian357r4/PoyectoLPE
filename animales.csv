@@ -14,3 +14,5 @@ ID;ANIMAL;PRECIO;NOMBRE;RAZA;EDAD;COLOR;MOD_REPRODUCCION;ALIMENTACION;TAMANO;PES
 13;Perro;213;fff;ffff;4;ffff;Vivíparo;Omnívoro;123;45;Masculino;Policia;N/A;N/A;N/A;N/A;Olfatear;1
 14;Perro;12312;asdsad;asdasd;5;fff;Vivíparo;Omnívoro;123;78;Masculino;Apoyo a invidentes;N/A;N/A;N/A;N/A;Sentarse;1
 15;Gato;2134;ggg;gggg;4;fff;Vivíparo;Omnívoro;45;500;Masculino;N/A;Gris;N/A;N/A;N/A;N/A;1
+16;Perro;1500;pepe;bulldog;4;cafe;Vivíparo;Omnívoro;80;4000;Masculino;Policia;N/A;N/A;N/A;N/A;Olfatear;1
+17;Perro;1500;pepe;chihuahua;4;gris;Vivíparo;Omnívoro;40;300;Femenino;Mascota;N/A;N/A;N/A;N/A;Dormir;1

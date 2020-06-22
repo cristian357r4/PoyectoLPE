@@ -12,6 +12,8 @@ from prettytable import PrettyTable
 regex_numero_int_decimal = '^([1-9]\d*(\.)\d*|0?(\.|\,)\d*[1-9]\d*|[1-9]\d*)$'
 regex_nombre = '(([A-Za-z])\w+\s*)+'  # TODO Validar a detalle esta variable
 animal = []
+stock_Animales = []
+
 # estructura del diccionario que guarara cada animal servira igualmente para tratar el archivo csv
 SCHEMA = {
     'ID': {
@@ -109,17 +111,20 @@ def consultar_animales():
 
                 list_data.append(file)
     # diccionario de listas
+    stock_Animales = list_data
+    #print(f'lista de animales temporal: {stock_Animales}')
     return list_data
 
 
-def _print_table_contacts(lista_animales):
+def _print_table_animales(lista_animales):
     #lista original
+
     table = PrettyTable(SCHEMA.keys())
     index = 0
     while index < len(lista_animales):
         '''for key in list_contacts[index]:
             print(list_contacts[index][key])'''
-        print(f'(index,estado_venta) = ({index+1},',lista_animales[index]['ESTADO_VENTA'],')')
+        #print(f'(index,estado_venta) = ({index+1},',lista_animales[index]['ESTADO_VENTA'],')')
         table.add_row(list(lista_animales[index].values()))
         index += 1
     print(table)
@@ -173,23 +178,24 @@ def buscar_animal():
     if reproduccion:
         filters['MOD_REPRODUCCION'] = reproduccion
     try:
-        list_animales = search_registros(filters)
-        if not list_animales:
-            return print('No hay ningún registro con esos criterios de búsqueda')
-
-        _print_table_contacts(list_animales)
+        print("Opcion Aun no implementada")
+        # list_animales = search_registros(filters)
+        # if not list_animales:
+        #     return print('No hay ningún registro con esos criterios de búsqueda')
+        #
+        # _print_table_animales(list_animales)
     except ValueError as err:
         print(err)
         time.sleep(1)
         buscar_animal()
 
-def search_registros(filters):
-    #filters diccionario
-    if 'ANIMAL' not in filters and 'ALIMENTACION' not in filters and 'MOD_REPRODUCCION' not in filters:
-        raise ValueError('Debes envíar al menos un filtro')
-
-    list_animales = filtrar_resultados(filters)
-    return resultados_de_busqueda(list_animales)
+# def search_registros(filters):
+#     #filters diccionario
+#     if 'ANIMAL' not in filters and 'ALIMENTACION' not in filters and 'MOD_REPRODUCCION' not in filters:
+#         raise ValueError('Debes envíar al menos un filtro')
+#
+#     list_animales = filtrar_resultados(filters)
+#     return resultados_de_busqueda(list_animales)
 
 def filtrar_resultados(filters):
 
@@ -218,18 +224,18 @@ def filtrar_resultados(filters):
 
     return list_data
 
-def resultados_de_busqueda(lista_animales):
-
-    if not lista_animales:
-        return None
-
-    object_contacts = []
-    # Convertimos los datos a objectos de tipo contact
-    for animal in lista_animales:
-        c = Contact(animal['ID'], animal['NAME'], animal['SURNAME'], animal['EMAIL'], animal['PHONE'], animal['BIRTHDAY'])
-        object_contacts.append(c)
-
-    return object_contacts
+# def resultados_de_busqueda(lista_animales):
+#
+#     if not lista_animales:
+#         return None
+#
+#     object_contacts = []
+#     # Convertimos los datos a objectos de tipo contact
+#     for animal in lista_animales:
+#         c = Contact(animal['ID'], animal['NAME'], animal['SURNAME'], animal['EMAIL'], animal['PHONE'], animal['BIRTHDAY'])
+#         object_contacts.append(c)
+#
+#     return object_contacts
 
 def get_last_id():
     list_ids = []
@@ -242,8 +248,8 @@ def get_last_id():
                 continue
             if row:
                 list_ids.append(row[0])
-    print('Before order: ', list_ids)
-    print(list_ids[-1])
+    #print('Before order: ', list_ids)
+    #print(list_ids[-1])
 
     if not list_ids:
         return 0
@@ -646,8 +652,8 @@ def comprarAnimal():
         estado_venta = 1
         print(f'Estado de Venta: {estado_venta}')
         animal.append(estado_venta)
-
-        print(f'Lista de salida(renglon) = {animal}')
+        #lista que se agregara al diccionario de animales
+        #print(f'Lista de salida(renglon) = {animal}')
         #mandar lista
         save_animal(animal)
 
@@ -727,7 +733,7 @@ def comprarAnimal():
         print(f'Estado de Venta: {estado_venta}')
         animal.append(estado_venta)
 
-        print(f'Lista de salida(renglon) = {animal}')
+        #print(f'Lista de salida(renglon) = {animal}')
         # mandar lista
         save_animal(animal)
 
@@ -992,14 +998,16 @@ def run():
     if command == 'C':
         comprarAnimal()
     elif command == 'L':
-        print(_print_table_contacts(consultar_animales()))
+
+        print(_print_table_animales(consultar_animales()))
 
     elif command == 'V':
         pass
     elif command == 'E':
         pass
     elif command == 'B':
-        buscar_animal()
+        print('En implementacion')
+        #buscar_animal()
     elif command == 'S':
         os._exit(1)
     else:

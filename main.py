@@ -2,6 +2,8 @@ import csv
 import os
 import time
 import re
+import shutil
+from tempfile import NamedTemporaryFile
 from prettytable import PrettyTable
 
 # Animales: perro, gato, pez, serpiente y araña
@@ -91,6 +93,115 @@ SCHEMA = {
 }
 '''               Operaciones de Archivo            '''
 
+
+def update(id_object, data):
+    return modify_file(id_object, data, 'update')
+
+def vender_animal():
+    _print_table_animales(consultar_animales())
+    print('Introduce el id del animal que quieres vender:')
+    id_object = input()
+
+    data = {}
+    data['ESTADO_VENTA']=0
+    try:
+        res = update(id_object, data)
+        if res:
+            print('Venta realizada con éxito')
+    except Exception as err:
+        print(err)
+        time.sleep(1)
+        vender_animal()
+
+
+def get_by_id(id_object):
+    list_header = []
+    with open('animales.csv', mode='r', encoding='utf-8') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=';')
+        is_header = True
+        for row in csv_reader:
+            if is_header:
+                list_header = row
+                is_header = False
+                continue
+
+            if row:
+                file = {}
+                for key, value in enumerate(row):
+                    file[list_header[key]] = value
+                if file['ID'] == id_object:
+                    return file
+
+    return {}
+
+def modify_file(id_object, data, action):
+    data_csv = get_by_id(id_object)
+    if not data_csv:
+        raise Exception('No se ha encontrado el objecto con el id enviado')
+
+    for key, value in data.items():
+        data_csv[key] = value
+
+    tempfile = NamedTemporaryFile(mode='w', delete=False, encoding='utf-8')
+
+    list_header = []
+    with open('animales.csv', mode='r', encoding='utf-8') as csv_file, tempfile:
+        csv_reader = csv.reader(csv_file, delimiter=';')
+        data_writer = csv.writer(tempfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
+
+        is_header = True
+        for row in csv_reader:
+            if is_header:
+                list_header = row
+                is_header = False
+                data_writer.writerow(row)
+                continue
+
+            # Si es update, actualizamos cuando hacemos match
+            if row and action == 'update':
+                file = {}
+                for key, value in enumerate(row):
+                    file[list_header[key]] = value
+
+                if file['ID'] != data_csv['ID']:
+                    data_writer.writerow(row)
+                    continue
+
+                for key, value in data_csv.items():
+                    file[key] = value
+
+                data_writer.writerow(file.values())
+            # Si es delete cuando hacemos match continuamos para saltarnos el insertado de esa línea
+            elif row and action == 'delete':
+                file = {}
+                for key, value in enumerate(row):
+                    file[list_header[key]] = value
+
+                if file['ID'] == data_csv['ID']:
+                    continue
+
+                data_writer.writerow(row)
+
+    shutil.move(tempfile.name, 'animales.csv')
+    return True
+
+def delete(id_object):  # recibe el id para el registro que se va  eliminar
+    return modify_file(id_object, {}, 'delete')
+
+
+def eliminar_animal():#metodo ingresar el id del registro que se quiere eliminar
+    #list_contacts()
+    _print_table_animales(consultar_animales())
+    print('Introduce el id del animal que quieres eliminar:')
+    id_object = input()
+    try:
+        res = delete(id_object)
+        if res:
+            print('Animal eliminado con éxito')
+    except Exception as err:
+        print(err)
+        time.sleep(1)
+        eliminar_animal()
 
 def consultar_animales(): #consulta animaes retornando una lista
     print('Consultar todos')
@@ -1006,9 +1117,10 @@ def run():
         _print_table_animales(consultar_animales())
 
     elif command == 'V':
+        vender_animal()
         pass
     elif command == 'E':
-        pass
+        eliminar_animal()
     elif command == 'B':
         buscar_animal()
     elif command == 'S':

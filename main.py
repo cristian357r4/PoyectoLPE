@@ -538,7 +538,7 @@ def check_pais_origen():
 
 def check_venenoso():
     while True:
-        print('La serpiente es venenosa ?')
+        print('La araña es venenosa ?')
         print('[S]i')
         print('[N]o')
         venenoso = input()

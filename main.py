@@ -92,7 +92,7 @@ SCHEMA = {
 '''               Operaciones de Archivo            '''
 
 
-def consultar_animales():
+def consultar_animales(): #consulta animaes retornando una lista
     print('Consultar todos')
     list_data = []
     list_header = []
@@ -111,7 +111,7 @@ def consultar_animales():
 
                 list_data.append(file)
     # diccionario de listas
-    stock_Animales = list_data
+    #stock_Animales = list_data
     #print(f'lista de animales temporal: {stock_Animales}')
     return list_data
 
@@ -179,23 +179,27 @@ def buscar_animal():
         filters['MOD_REPRODUCCION'] = reproduccion
     try:
         print("Opcion Aun no implementada")
-        # list_animales = search_registros(filters)
-        # if not list_animales:
-        #     return print('No hay ningún registro con esos criterios de búsqueda')
-        #
-        # _print_table_animales(list_animales)
+        print (f'Filters: {filters}')
+        list_animales = search_animales(filters)
+        if not list_animales:
+            return print('No hay ningún registro con esos criterios de búsqueda')
+        else:
+            _print_table_animales(list_animales)
     except ValueError as err:
         print(err)
         time.sleep(1)
         buscar_animal()
 
-# def search_registros(filters):
-#     #filters diccionario
-#     if 'ANIMAL' not in filters and 'ALIMENTACION' not in filters and 'MOD_REPRODUCCION' not in filters:
-#         raise ValueError('Debes envíar al menos un filtro')
-#
-#     list_animales = filtrar_resultados(filters)
-#     return resultados_de_busqueda(list_animales)
+def search_animales(filters):
+
+    #filters diccionario
+    if 'ANIMAL' not in filters and 'ALIMENTACION' not in filters and 'MOD_REPRODUCCION' not in filters:
+        raise ValueError('Debes envíar al menos un filtro')
+
+    list_animales = filtrar_resultados(filters)
+    print(f'Lista de elementos filtrados {list_animales}')
+    return list_animales
+
 
 def filtrar_resultados(filters):
 
@@ -597,7 +601,7 @@ def comprarAnimal():
         animal.append(mod_reprocuccion)
 
         alimentacion = 'Omnívoro'
-        print(f'Modo de reproduccion: {alimentacion}')
+        print(f'Tipo de alimentacion: {alimentacion}')
         animal.append(alimentacion)
 
         tamano = check_tamano('p')
@@ -690,7 +694,7 @@ def comprarAnimal():
         animal.append(mod_reprocuccion)
 
         alimentacion = 'Omnívoro'
-        print(f'Modo de Alimentacio: {alimentacion}')
+        print(f'Modo de Alimentacion: {alimentacion}')
         animal.append(alimentacion)
 
         tamano = check_tamano_gato()
@@ -998,16 +1002,15 @@ def run():
     if command == 'C':
         comprarAnimal()
     elif command == 'L':
-
-        print(_print_table_animales(consultar_animales()))
+        #consulta animales
+        _print_table_animales(consultar_animales())
 
     elif command == 'V':
         pass
     elif command == 'E':
         pass
     elif command == 'B':
-        print('En implementacion')
-        #buscar_animal()
+        buscar_animal()
     elif command == 'S':
         os._exit(1)
     else:
